@@ -1,0 +1,141 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Player</title>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.5.6/plyr.css" />
+  <script src="https://cdn.plyr.io/3.5.6/plyr.js"></script>
+  <style>
+    body{margin: 0;padding: 0}.container{max-width: 800px;margin: 0 auto;padding: 10px;background-color: #f9f9f9;border-radius: 0px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)}.season-list{display: flex;justify-content: center;margin-bottom: 20px}.season-list h4{margin: 0;margin-top: 10px}.custom-controls{display: flex;justify-content: center;margin-top: 10px}.custom-controls button{margin: 2 5px;padding: 5px 10px;cursor: pointer}.input-controls{margin-bottom: 20px;margin-top: 15px}.input-controls input{width: 70%;padding: 10px;margin-right: 10px}.input-controls button{padding: 10px;margin: 3px}.vid{width: 100%;margin: 0 auto;padding: 0px;background-color: #f9f9f9;border-radius: 20px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)}.video-timer{margin-top: 10px;font-size: 16px;font-weight: bold}.volume-control{margin-top: 10px}.volume-control input{width: 100px}
+  </style>
+</head>
+<body>
+  <center>
+  <div class="season-list">
+      <h4>Media Player</h4>
+    </div>
+      </center>
+
+  <div class="vid">
+   <video class="js-player" controls poster="" playsinline webkit-playsinline>
+      <source id="video-source" src="" type="video/mp4" />
+    </video>
+    </div>
+    
+  <div class="container">
+    <div class="custom-controls">
+      <span>
+     <button id="rewind-10s">«10s</button>
+      <button id="rewind-30s">«30s</button>
+      <button id="rewind-1">«1m</button>
+      <button id="rewind-2">«2m</button>
+      <button id="rewind-3">«3m</button>
+      <button id="rewind-5">«5m</button>
+      <button id="rewind-10">«10m</button>
+      </span>
+     <span>
+      <button id="forward-10s">»10s</button>
+      <button id="forward-30s">»30s</button>
+      <button id="forward-1">»1m</button>
+      <button id="forward-2">»2m</button>
+      <button id="forward-3">»3m</button>
+      <button id="forward-5">»5m</button>
+      <button id="forward-10">»10m</button>
+      </span>
+    </div>
+    <center>
+    <div class="input-controls">
+      <input type="text" id="video-url" placeholder="Your URL video" />
+      <button id="load-video">Load Video</button>
+    </div>
+    </center>
+  </div>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const controls = [
+      'play-large',
+      'rewind',
+      'play',
+      'fast-forward',
+      'progress',
+      'current-time',
+      'duration',
+      'mute',
+      'volume',
+      //'captions',
+      //'settings',
+      //'pip',
+      //'airplay',
+      'fullscreen'
+    ];
+
+    const players = Plyr.setup('.js-player', { controls });
+
+    document.getElementById('load-video').addEventListener('click', () => {
+      const videoUrl = document.getElementById('video-url').value;
+      const videoSource = document.getElementById('video-source');
+      if (videoUrl) {
+        videoSource.src = videoUrl;
+        videoSource.parentElement.load();
+      }
+    });
+
+    function skip(player, time) {
+      player.currentTime = Math.max(0, player.currentTime + time);
+    }
+
+    const addSkipEvents = (player) => {
+      document.getElementById('rewind-10s').addEventListener('click', () => skip(player, -10));
+      document.getElementById('rewind-30s').addEventListener('click', () => skip(player, -30));
+      document.getElementById('rewind-1').addEventListener('click', () => skip(player, -60));
+      document.getElementById('rewind-2').addEventListener('click', () => skip(player, -120));
+      document.getElementById('rewind-3').addEventListener('click', () => skip(player, -180));
+      document.getElementById('rewind-5').addEventListener('click', () => skip(player, -300));
+      document.getElementById('rewind-10').addEventListener('click', () => skip(player, -600));
+      document.getElementById('forward-10s').addEventListener('click', () => skip(player, 10));
+      document.getElementById('forward-30s').addEventListener('click', () => skip(player, 30));
+      document.getElementById('forward-1').addEventListener('click', () => skip(player, 60));
+      document.getElementById('forward-2').addEventListener('click', () => skip(player, 120));
+      document.getElementById('forward-3').addEventListener('click', () => skip(player, 180));
+      document.getElementById('forward-5').addEventListener('click', () => skip(player, 300));
+      document.getElementById('forward-10').addEventListener('click', () => skip(player, 600));
+    };
+
+    players.forEach((player) => {
+      const controlsContainer = player.elements.controls;
+
+      if (controlsContainer) {
+        const createButton = (label, ariaLabel, time) => {
+          const button = document.createElement('button');
+          button.classList.add('plyr__control');
+          button.setAttribute('type', 'button');
+          button.setAttribute('aria-label', ariaLabel);
+          button.textContent = label;
+          button.addEventListener('click', () => skip(player, time));
+          return button;
+        };
+
+const rewind30Btn = createButton('«30s', 'Rewind 30 seconds', -30);
+const rewind1MinBtn = createButton('«1m', 'Rewind 1 minute', -60);
+
+controlsContainer.appendChild(rewind30Btn);
+controlsContainer.appendChild(rewind1MinBtn);
+
+        const forward30Btn = createButton('»30s', 'Forward 30 seconds', 30);
+        const forward1MinBtn = createButton('»1m', 'Forward 1 minute', 60);
+        const forward3MinBtn = createButton('»3m', 'Forward 3 minutes', 180);
+        const forward5MinBtn = createButton('»5m', 'Forward 5 minutes', 300);
+
+        controlsContainer.appendChild(forward30Btn);
+        controlsContainer.appendChild(forward1MinBtn);
+        controlsContainer.appendChild(forward3MinBtn);
+        controlsContainer.appendChild(forward5MinBtn);
+      }
+
+      addSkipEvents(player);
+    });
+  });
+</script>
+</body>
+</html>
